@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    Transform cameraObject;
+    bool isSprinting => canSprint && playerInput.isSprint;
+
     public Transform orientation;
     PlayerInput playerInput;
 
@@ -16,66 +17,62 @@ public class PlayerMovement : MonoBehaviour
     public GameObject normalCamera;
 
     [Header("Stats")]
-    [SerializeField]
-    float movementSpeed = 5f;
-    [SerializeField]
-    float groundDrag;
+    [SerializeField, Range(1, 10)] float walkSpeed = 5f;
+    [SerializeField, Range(1, 15)] float sprintSpeed = 8f;
+    [SerializeField, Range(1, 200)] float mass = 10f;
+    [SerializeField] bool canSprint = true;
+    float thisSpeed;
 
+    Vector3 moveDirection;
     [Header("Ground Check")]
     public float playerHeight;
     public LayerMask whatIsGround;
-    bool grounded;
+
+    private CharacterController characterController;
 
     void Start()
     {
         TryGetComponent(out rigidbody);
-
         TryGetComponent(out playerInput);
-
-        cameraObject = Camera.main.transform;
+        TryGetComponent(out characterController);
 
         playerTransform = transform;
     }
 
     private void Update()
     {
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * .5f + .2f, whatIsGround);
-
+        // 플레이어 입력 처리
         playerInput.TickInput();
-        SpeedControl();
 
-        if (grounded)
-        {
-            rigidbody.drag = groundDrag;
-        }
-        else
-        {
-            rigidbody.drag = 0;
-        }
+        // 플레이어 상태에 따른 처리
+        PlayerState();
+
+        // 플레이어 이동량을 계산
+        MovementInput();
+
+        // 플레이어 이동 처리
+        MovementPlayer();
     }
 
     #region Movement
-    private void FixedUpdate()
+
+    void PlayerState()
     {
-        MovePlayer();
+        thisSpeed = isSprinting ? sprintSpeed : walkSpeed;
     }
-    void MovePlayer()
+    void MovementInput()
     {
         // move direction 계산
-        Vector3 moveDirection = orientation.forward * playerInput.vertical + orientation.right * playerInput.horizontal;
+        moveDirection = orientation.forward * playerInput.vertical + orientation.right * playerInput.horizontal;
 
-        rigidbody.AddForce(moveDirection.normalized * movementSpeed * 10f, ForceMode.Force);
+        if (moveDirection.magnitude > 1f) { moveDirection.Normalize(); }
     }
 
-    void SpeedControl()
+    void MovementPlayer()
     {
-        Vector3 flatVel = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
+        if (!characterController.isGrounded) { moveDirection.y -= EnvironmentData.Instance.Gravity * mass * Time.deltaTime; }
 
-        if (flatVel.magnitude > movementSpeed)
-        {
-            Vector3 limitedVel = flatVel.normalized * movementSpeed;
-            rigidbody.velocity = new Vector3(limitedVel.x, rigidbody.velocity.y, limitedVel.z);
-        }
+        characterController.Move(Time.deltaTime * thisSpeed * moveDirection);
     }
     #endregion
 }

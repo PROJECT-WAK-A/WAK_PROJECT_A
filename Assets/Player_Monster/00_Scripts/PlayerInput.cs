@@ -6,31 +6,13 @@ public class PlayerInput : MonoBehaviour
 {
     public float horizontal;
     public float vertical;
-    public float moveAmount;
     public float mouseX;
     public float mouseY;
 
-    PlayerController inputActions;
+    public bool isSprint = false;
 
-    Vector2 movementInput;
-
-    private void OnEnable()
-    {
-        if (inputActions == null)
-        {
-            inputActions = new PlayerController();
-
-            // 할당
-            inputActions.PlayerMovement.Movement.performed += inputActions => movementInput = inputActions.ReadValue<Vector2>();
-        }
-
-        inputActions.Enable();
-    }
-
-    private void OnDisable()
-    {
-        inputActions.Disable();
-    }
+    [Header("Controls")]
+    [SerializeField] KeyCode sprintKey = KeyCode.LeftShift;
 
     public void TickInput()
     {
@@ -39,12 +21,12 @@ public class PlayerInput : MonoBehaviour
 
     private void MoveInput()
     {
-        horizontal = movementInput.x;
-        vertical = movementInput.y;
+        horizontal = Input.GetAxis("Horizontal");
+        vertical = Input.GetAxis("Vertical");
 
-        // Clamp01 = 최소 최대값 fix 반환값 0 ~ 1 float
-        moveAmount = Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical));
         mouseX = Input.GetAxisRaw("Mouse X");
         mouseY = Input.GetAxisRaw("Mouse Y");
+
+        isSprint = Input.GetKey(sprintKey);
     }
 }

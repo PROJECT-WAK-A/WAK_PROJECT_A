@@ -241,37 +241,6 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
---- !u!1 &596466494
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 596466495}
-  m_Layer: 0
-  m_Name: orientation
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &596466495
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 596466494}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2033448474}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1323193700
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,7 +252,6 @@ GameObject:
   - component: {fileID: 1323193701}
   - component: {fileID: 1323193704}
   - component: {fileID: 1323193703}
-  - component: {fileID: 1323193702}
   m_Layer: 0
   m_Name: Player_Model
   m_TagString: Untagged
@@ -306,20 +274,6 @@ Transform:
   m_Father: {fileID: 2033448474}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &1323193702
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1323193700}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1323193703
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -624,10 +578,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2033448474}
-  - component: {fileID: 2033448475}
   - component: {fileID: 2033448476}
   - component: {fileID: 2033448477}
   - component: {fileID: 2033448478}
+  - component: {fileID: 2033448479}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -649,26 +603,9 @@ Transform:
   m_Children:
   - {fileID: 1323193701}
   - {fileID: 1734824496}
-  - {fileID: 596466495}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &2033448475
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2033448473}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 112
-  m_CollisionDetection: 1
 --- !u!114 &2033448476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -683,9 +620,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   horizontal: 0
   vertical: 0
-  moveAmount: 0
   mouseX: 0
   mouseY: 0
+  isSprint: 0
+  sprintKey: 304
 --- !u!114 &2033448477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -698,12 +636,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a16678518b73e4e82e6274dc1e22fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orientation: {fileID: 596466495}
+  orientation: {fileID: 2033448474}
   playerTransform: {fileID: 0}
   rigidbody: {fileID: 0}
   normalCamera: {fileID: 0}
-  movementSpeed: 6
-  groundDrag: 5
+  walkSpeed: 5
+  sprintSpeed: 8
+  mass: 10
+  canSprint: 1
   playerHeight: 2
   whatIsGround:
     serializedVersion: 2
@@ -720,7 +660,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 323f291e9d63620418afd48dd6fb2afe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensX: 700
-  sensY: 500
-  orientation: {fileID: 596466495}
+  sensX: 400
+  sensY: 300
+  orientation: {fileID: 2033448474}
   cameraTransform: {fileID: 1734824496}
+--- !u!143 &2033448479
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2033448473}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}

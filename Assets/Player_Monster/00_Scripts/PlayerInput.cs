@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerInput : MonoBehaviour
 {
@@ -10,9 +11,11 @@ public class PlayerInput : MonoBehaviour
     public float mouseY;
 
     public bool isSprint = false;
+    public bool isJump = false;
 
     [Header("Controls")]
     [SerializeField] KeyCode sprintKey = KeyCode.LeftShift;
+    [SerializeField] KeyCode jumpKey = KeyCode.Space;
 
     public void TickInput()
     {
@@ -28,5 +31,14 @@ public class PlayerInput : MonoBehaviour
         mouseY = Input.GetAxisRaw("Mouse Y");
 
         isSprint = Input.GetKey(sprintKey);
+    }
+    public void OnJump(InputValue value)
+    {
+        JumpInput(value.isPressed);
+    }
+
+    public void JumpInput(bool newJumpState)
+    {
+        isJump = newJumpState;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -25,7 +26,27 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] bool canMove = true;
     [SerializeField] bool canSprint = true;
     [SerializeField] bool canShaking = true;
+
+
+    [Header("Jump")]
+    [SerializeField] float jumpForce = 8f;
+    [SerializeField] bool canJump = true;
+    [SerializeField] float groundOffset = -.14f;
+    [SerializeField] float groundRadius = .5f;
+    [SerializeField, Range(0, 5)] float drag = 0.9f;
+    // 종단 속도
+    [SerializeField] float terminalVelocity = 55f;
+    public float jumpTimeout = .1f;
+    public float fallTimeout = .15f;
+    public LayerMask groundLayer;
     float thisSpeed;
+    bool isGrounded = true;
+    float verticalVelocity;
+
+    // timeout deltatime
+    private float jumpTimeoutDelta;
+    private float fallTimeoutDelta;
+
 
 
     [Header("Camera shake while moving")]
@@ -46,6 +67,9 @@ public class PlayerMovement : MonoBehaviour
         defaultCamPos = playerCamera.localPosition;
 
         playerTransform = transform;
+
+        jumpTimeoutDelta = jumpTimeout;
+        fallTimeoutDelta = fallTimeout;
     }
 
     private void Update()
@@ -55,6 +79,7 @@ public class PlayerMovement : MonoBehaviour
 
         // 플레이어 상태에 따른 처리
         PlayerState();
+        PlayerGroundCheck();
 
         if (canMove)
         {
@@ -66,7 +91,11 @@ public class PlayerMovement : MonoBehaviour
                 CameraShaking();
             }
 
+            if (canJump)
+                MovementPlayerJump();
 
+            // 중력
+            MovementPlayerGravity();
             // 플레이어 이동 처리
             MovementPlayer();
         }
@@ -78,6 +107,12 @@ public class PlayerMovement : MonoBehaviour
     {
         thisSpeed = isSprinting ? sprintSpeed : walkSpeed;
     }
+
+    void PlayerGroundCheck()
+    {
+        Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - groundOffset, transform.position.z);
+        isGrounded = Physics.CheckSphere(spherePosition, groundRadius, groundLayer, QueryTriggerInteraction.Ignore);
+    }
     void MovementInput()
     {
         // move direction 계산
@@ -85,21 +120,62 @@ public class PlayerMovement : MonoBehaviour
 
         if (moveDirection.magnitude > 1f) { moveDirection.Normalize(); }
 
-        moveDirection *= Time.deltaTime * thisSpeed;
-    }
+        moveDirection *= thisSpeed;
 
+        moveDirection.y = verticalVelocity;
+    }
+    void MovementPlayerGravity()
+    {
+        if (verticalVelocity < terminalVelocity)
+        {
+            verticalVelocity += EnvironmentData.Instance.Gravity * mass * drag * Time.deltaTime;
+        }
+
+    }
     void MovementPlayer()
     {
-        if (!characterController.isGrounded) { moveDirection.y -= EnvironmentData.Instance.Gravity * mass * Time.deltaTime; }
+        characterController.Move(moveDirection * Time.deltaTime);
+    }
 
-        characterController.Move(moveDirection);
+    void MovementPlayerJump()
+    {
+        if (isGrounded)
+        {
+            fallTimeoutDelta = fallTimeout;
+
+            if (verticalVelocity < 0f)
+            {
+                verticalVelocity = -2f;
+            }
+
+            if (playerInput.isJump && jumpTimeoutDelta <= 0f)
+            {
+                verticalVelocity = Mathf.Sqrt(jumpForce * -2f * EnvironmentData.Instance.Gravity);
+            }
+
+            if (jumpTimeoutDelta >= 0f)
+            {
+                jumpTimeoutDelta -= Time.deltaTime;
+            }
+        }
+        else
+        {
+            jumpTimeoutDelta = jumpTimeout;
+
+            if (fallTimeoutDelta >= 0f)
+            {
+                fallTimeoutDelta -= Time.deltaTime;
+            }
+            playerInput.isJump = false;
+        }
+
     }
     #endregion
 
     #region Camera
     void CameraShaking()
     {
-        if (!characterController.isGrounded) { return; }
+        if (!isGrounded) { return; }
 
         // 이동량이 있을때만
         if (playerInput.horizontal > .2f || playerInput.vertical > .2f)
@@ -112,7 +188,7 @@ public class PlayerMovement : MonoBehaviour
                           defaultCamPos.y + -Mathf.Abs(Mathf.Sin(timer)) * yShakingAmount,
                           playerCamera.localPosition.z);
         }
-        // .2f보다 떨어지면 입력을 안한것으로 간주
+        // .2f보다 아래면 입력을 안한것으로 간주
         else
         {
             if (isShaking == false) { return; }

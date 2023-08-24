@@ -27,7 +27,7 @@ public class CameraHandler : MonoBehaviour
         Cursor.visible = false;
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         float mouseX = playerInput.mouseX * sensX * Time.deltaTime;
         float mouseY = playerInput.mouseY * sensY * Time.deltaTime;

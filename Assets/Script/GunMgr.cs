@@ -45,6 +45,7 @@ namespace Item
             {
                 gunState = (GunModeState)(((int)gunState + 1) % Enum.GetNames(typeof(GunModeState)).Length);        // 총 상태 변경
                 previousState = gunState;                                                                           // 이전 상태 저장
+                uiUpdateable.UpdateFireMode(gunState.ToString());                                                   // 발사 모드 UI 갱신
                 SetFiringMode(gunState);
                 Debug.Log(gunState);
             }

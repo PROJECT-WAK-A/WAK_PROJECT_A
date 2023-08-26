@@ -5,7 +5,9 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     EnemyMovementManager enemyMovementManager;
-    bool isPerformingAction;
+
+    // 무언가 수행중
+    public bool isPerformingAction;
 
     [Header("A.I Settings")]
     public float detectionRadius;
@@ -14,17 +16,25 @@ public class EnemyManager : MonoBehaviour
 
     private void Awake()
     {
+        isPerformingAction = false;
         TryGetComponent(out enemyMovementManager);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         CurrentAction();
     }
     public void CurrentAction()
     {
-        if (enemyMovementManager.currentTarget != null) { return; }
+        if (enemyMovementManager.currentTarget == null)
+        {
+            enemyMovementManager.Detection();
 
-        enemyMovementManager.Detection();
+        }
+        else
+        {
+            enemyMovementManager.MoveToTarget();
+        }
     }
+
 }

@@ -1168,14 +1168,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
-    - target: {fileID: 5587822016940975193, guid: d7afe61c29f9d420b87d7f11d94a0a5b,
+    - target: {fileID: 6219321617700038218, guid: d7afe61c29f9d420b87d7f11d94a0a5b,
         type: 3}
-      propertyPath: detectionRadius
-      value: 4
+      propertyPath: m_UpdateMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6219321617700038218, guid: d7afe61c29f9d420b87d7f11d94a0a5b,
         type: 3}
-      propertyPath: m_ApplyRootMotion
+      propertyPath: m_CullingMode
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

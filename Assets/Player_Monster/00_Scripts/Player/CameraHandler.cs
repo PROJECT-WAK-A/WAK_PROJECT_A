@@ -14,7 +14,7 @@ public class CameraHandler : MonoBehaviour
     float xRotation;
     float yRotation;
 
-    PlayerInput playerInput;
+    PlayerInputHandler playerInput;
 
     private void Awake()
     {

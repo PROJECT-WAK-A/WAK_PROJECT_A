@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     bool isSprinting => canSprint && playerInput.isSprint;
 
     public Transform orientation;
-    PlayerInput playerInput;
+    PlayerInputHandler playerInput;
 
 
     [HideInInspector]

@@ -7,7 +7,9 @@ using UnityEngine.AI;
 public class EnemyMovementManager : MonoBehaviour
 {
     EnemyManager enemyManager;
+    EnemyAnimatorManager enemyAnimatorManager;
     NavMeshAgent navMeshAgent;
+    public Rigidbody rb;
 
     public CharacterStats currentTarget = null;
     public LayerMask detectionLayer;
@@ -20,12 +22,19 @@ public class EnemyMovementManager : MonoBehaviour
     private void Awake()
     {
         TryGetComponent(out enemyManager);
-        TryGetComponent(out navMeshAgent);
+        TryGetComponent(out rb);
+        TryGetComponent(out enemyAnimatorManager);
+        navMeshAgent = GetComponentInChildren<NavMeshAgent>();
+
     }
 
     private void Start()
     {
         navMeshAgent.enabled = false;
+        rb.isKinematic = false;
+
+        enemyAnimatorManager.anim.SetBool("Grounded", true);
+        enemyAnimatorManager.anim.SetFloat("MotionSpeed", 1f);
     }
 
     // Player 감지
@@ -55,11 +64,10 @@ public class EnemyMovementManager : MonoBehaviour
     {
         Vector3 targetDirection = currentTarget.transform.position - transform.position;
         ProcssingOnDistanceState(targetDirection);
-        SetVelocity(targetDirection);
         RotateTowardsTarget(targetDirection);
 
-        // navMeshAgent.transform.localPosition = Vector3.zero;
-        // navMeshAgent.transform.localRotation = Quaternion.identity;
+        navMeshAgent.transform.localPosition = Vector3.zero;
+        navMeshAgent.transform.localRotation = Quaternion.identity;
     }
     private void ProcssingOnDistanceState(Vector3 direction)
     {
@@ -69,6 +77,7 @@ public class EnemyMovementManager : MonoBehaviour
         // 액션 중일 때
         if (enemyManager.isPerformingAction)
         {
+            enemyAnimatorManager.anim.SetFloat("Speed", 0f, 0.1f, Time.deltaTime);
             navMeshAgent.enabled = false;
         }
         else
@@ -76,26 +85,13 @@ public class EnemyMovementManager : MonoBehaviour
             // 애니메이션 처리
             if (distanceFromTarget > stoppingDistance)
             {
-
+                enemyAnimatorManager.anim.SetFloat("Speed", 5f, 0.1f, Time.deltaTime);
             }
             else if (distanceFromTarget <= stoppingDistance)
             {
+                enemyAnimatorManager.anim.SetFloat("Speed", 0f, 0.1f, Time.deltaTime);
                 navMeshAgent.enabled = false;
             }
-        }
-    }
-    private void SetVelocity(Vector3 direction)
-    {
-        if (enemyManager.isPerformingAction)
-        {
-
-        }
-        else
-        {
-            // direction.y = 0;
-
-            // Vector3 targetVelocity = direction.normalized * movementSpeed  Time.deltaTime;
-            // enemyRigidBody.velocity = targetVelocity;
         }
     }
     private void RotateTowardsTarget(Vector3 direction)
@@ -117,12 +113,15 @@ public class EnemyMovementManager : MonoBehaviour
         else
         {
             Vector3 relativeDirection = transform.InverseTransformDirection(navMeshAgent.desiredVelocity);
+
             Debug.Log(relativeDirection);
+            Vector3 targetVelocity = navMeshAgent.velocity;
+
             navMeshAgent.enabled = true;
             navMeshAgent.SetDestination(currentTarget.transform.position);
-            // Debug.Log(currentTarget.transform.position);
+            rb.velocity = targetVelocity;
 
-            // transform.rotation = Quaternion.Slerp(transform.rotation, navMeshAgent.transform.rotation, rotationSpeed / Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, navMeshAgent.transform.rotation, rotationSpeed / Time.deltaTime);
         }
     }
 }

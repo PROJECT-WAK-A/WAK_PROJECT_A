@@ -984,15 +984,15 @@ MonoBehaviour:
   playerCamera: {fileID: 1435753496}
   walkSpeed: 5
   sprintSpeed: 8
-  mass: 10
+  mass: 5.6
   canMove: 1
   canSprint: 1
   canShaking: 1
-  jumpForce: 13.5
+  jumpForce: 10.04
   canJump: 1
   groundOffset: -0.14
   groundRadius: 0.5
-  drag: 1.03
+  drag: 1.15
   terminalVelocity: 55
   jumpTimeout: 0.1
   fallTimeout: 0.15

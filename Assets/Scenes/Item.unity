@@ -203,6 +203,7 @@ GameObject:
   - component: {fileID: 256393856}
   - component: {fileID: 256393855}
   - component: {fileID: 256393854}
+  - component: {fileID: 256393858}
   m_Layer: 0
   m_Name: Gun
   m_TagString: Untagged
@@ -288,6 +289,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &256393858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256393853}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0093123c3c31624ca197d0488ab6d34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunName: TestGun
+  range: 10
+  accuracy: 0
+  fireRate: 0.2
+  reloadTime: 3
+  damage: 10
+  reloadBulletCount: 0
+  currentBulletCount: 0
+  maxBulletCount: 0
+  carryBulletCount: 0
+  retroActionForce: 0
+  retroActionFineSightForce: 0
+  fineSightOriginPos: {x: 0, y: 0, z: 0}
+  firingMode: 0
 --- !u!1 &297106036
 GameObject:
   m_ObjectHideFlags: 0
@@ -299,7 +326,7 @@ GameObject:
   - component: {fileID: 297106037}
   - component: {fileID: 297106038}
   m_Layer: 0
-  m_Name: GunMgr
+  m_Name: GunController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -332,6 +359,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26d855d0993e8fc469361f12fd201be2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentGun: {fileID: 256393858}
   gun: {fileID: 256393853}
   bullet: {fileID: 1124179929510599493, guid: 44cb93151f1027c40b92892ab891414e, type: 3}
 --- !u!1 &471659629
@@ -530,7 +558,8 @@ Transform:
   m_LocalPosition: {x: -0.11, y: 0.49999994, z: 0.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1918079816}
   m_Father: {fileID: 901420153}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -929,7 +958,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1446507142
 MonoBehaviour:
@@ -1047,7 +1076,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &1799609568
+--- !u!1 &1918079815
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1055,42 +1084,29 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1799609569}
-  - component: {fileID: 1799609570}
+  - component: {fileID: 1918079816}
   m_Layer: 0
-  m_Name: GameMgr
+  m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1799609569
+--- !u!4 &1918079816
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1799609568}
+  m_GameObject: {fileID: 1918079815}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_Father: {fileID: 576900958}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1799609570
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1799609568}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3c5ba4497e0329419ce70e8f6f73af3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2028181166
 GameObject:
   m_ObjectHideFlags: 0

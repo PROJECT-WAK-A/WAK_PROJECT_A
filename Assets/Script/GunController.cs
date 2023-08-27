@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UI;
+using Items;
 
-namespace Item
+namespace Controllers
 {
     public class GunController : MonoBehaviour
     {
@@ -20,16 +21,6 @@ namespace Item
 
         private float shootDelay = 0.1f;    // 총알 발사 딜레이
         private int bulletCount = 30;            // 총알 개수
-        
-        // 총기 모드 상태
-        private enum GunModeState { 
-            Empty,
-            Auto,
-            SemiAuto
-        };
-
-        private GunModeState gunState = GunModeState.Empty; // 총 상태
-        private GunModeState previousState = GunModeState.Empty; // 이전 상태 저장
 
 
         /// <summary>
@@ -40,6 +31,7 @@ namespace Item
         private void Start()
         {
             uiUpdateable = FindObjectOfType<UIMgr>();
+            Debug.Log(currentGun.firingMode.ToString());
         }
 
         // Update is called once per frame
@@ -54,12 +46,12 @@ namespace Item
             }
 
             if(Input.GetKeyDown(KeyCode.R)){
-                Reload();
+                // Reload();
             }
 
             if(bulletCount <= 0)
             {
-                gunState = GunModeState.Empty;
+                // firingMode = GunModeState.Empty;
                 TrySetFireMode();
             }
 
@@ -74,28 +66,29 @@ namespace Item
         /// </summary>
         private void TrySetFireMode(){
             // 나중에 애니메이션 등 연출에 따라 사용
-            SetFiringMode();
+            if(gun != null){
+                SetFiringMode();
+            }
         }
 
         // 총 발사 상태 변경 처리 과정
         private void SetFiringMode()
         {
-            gunState = (GunModeState)(((int)gunState + 1) % Enum.GetNames(typeof(GunModeState)).Length);        // 총 상태 변경
-            previousState = gunState;                                                                           // 이전 상태 저장
-            uiUpdateable.UpdateFireMode(gunState.ToString());                                                   // 발사 모드 UI 갱신
+            currentGun.firingMode = (Gun.GunModeState)(((int)currentGun.firingMode + 1) % Enum.GetNames(typeof(Gun.GunModeState)).Length); // 발사 모드 변경
+            uiUpdateable.UpdateFireMode(currentGun.firingMode.ToString()); // 발사 모드 UI 갱신
 
-            switch (gunState)
+            switch (currentGun.firingMode)
             {
-                case GunModeState.Empty:
+                case Gun.GunModeState.Empty:
                     // 비어있는 상태에서는 아무 작업도 하지 않음
                     break;
 
-                case GunModeState.Auto:
+                case Gun.GunModeState.Auto:
                     // Auto 상태에서는 연사가 가능하도록 발사 딜레이를 짧게 설정
                     shootDelay = 0.1f;
                     break;
 
-                case GunModeState.SemiAuto:
+                case Gun.GunModeState.SemiAuto:
                     // SemiAuto 상태에서는 연사가 불가능하도록 발사 딜레이를 길게 설정
                     shootDelay = 0.8f;
                     break;
@@ -106,8 +99,8 @@ namespace Item
         /// 총알 발사 시도 = 발사 가능 상태인지 확인
         /// </summary>
         private void TryShoot(){
-            // 연사 속도가 0이면 총알 발사
-            if(currentFireRate <= 0 && gunState != GunModeState.Empty){
+            // // 연사 속도가 0이면 총알 발사
+            if(currentFireRate <= 0 && currentGun.firingMode != Gun.GunModeState.Empty){
                 Shoot();
             }
         }
@@ -122,12 +115,12 @@ namespace Item
             Instantiate(bullet, gun.transform.position, gun.transform.rotation);
         }
 
-        private void Reload(){
-            // R 키를 누르면 재장전
-            bulletCount = 30;
-            uiUpdateable.UpdateBulletCount(bulletCount);                // 총알 개수 UI 갱신
-            gunState = previousState;                                   // 이전 상태로 변경
-        }
+        // private void Reload(){
+        //     // R 키를 누르면 재장전
+        //     bulletCount = 30;
+        //     uiUpdateable.UpdateBulletCount(bulletCount);                // 총알 개수 UI 갱신
+        //     gunState = previousState;                                   // 이전 상태로 변경
+        // }
 
 
         /// <summary>

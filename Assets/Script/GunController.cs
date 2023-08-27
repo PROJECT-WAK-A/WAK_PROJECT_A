@@ -57,7 +57,6 @@ namespace Controllers
 
             if (Input.GetMouseButton(0)){
                 TryShoot();
-                // uiUpdateable.UpdateBulletCount(--bulletCount);
             }
         }
 
@@ -96,12 +95,13 @@ namespace Controllers
         }
 
         /// <summary>
-        /// 총알 발사 시도 = 발사 가능 상태인지 확인
+        /// 총알 발사 시도 = 발사 가능 상태인지 확인, 발사 진행 과정
         /// </summary>
         private void TryShoot(){
             // // 연사 속도가 0이면 총알 발사
             if(currentFireRate <= 0 && currentGun.firingMode != Gun.GunModeState.Empty){
                 Shoot();
+                uiUpdateable.UpdateBulletCount(--bulletCount);                // 총알 개수 UI 갱신
             }
         }
 

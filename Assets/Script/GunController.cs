@@ -6,7 +6,7 @@ using UI;
 
 namespace Item
 {
-    public class GunMgr : MonoBehaviour
+    public class GunController : MonoBehaviour
     {
 
         public GameObject gun;              // 총 프리팹

@@ -31,7 +31,6 @@ namespace Controllers
         private void Start()
         {
             uiUpdateable = FindObjectOfType<UIMgr>();
-            Debug.Log(currentGun.firingMode.ToString());
         }
 
         // Update is called once per frame
@@ -47,12 +46,6 @@ namespace Controllers
 
             if(Input.GetKeyDown(KeyCode.R)){
                 // Reload();
-            }
-
-            if(bulletCount <= 0)
-            {
-                // firingMode = GunModeState.Empty;
-                TrySetFireMode();
             }
 
             if (Input.GetMouseButton(0)){
@@ -99,7 +92,7 @@ namespace Controllers
         /// </summary>
         private void TryShoot(){
             // // 연사 속도가 0이면 총알 발사
-            if(currentFireRate <= 0 && currentGun.firingMode != Gun.GunModeState.Empty){
+            if(currentFireRate <= 0 && currentGun.firingMode != Gun.GunModeState.Empty && bulletCount > 0){
                 Shoot();
                 uiUpdateable.UpdateBulletCount(--bulletCount);                // 총알 개수 UI 갱신
             }

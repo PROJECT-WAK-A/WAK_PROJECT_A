@@ -7,7 +7,7 @@ namespace UI
 {
     public interface IUIUpdateable
     {
-        void UpdateBulletCount(int bulletCount);
+        void UpdateBulletCount(int bulletCount, int carryBulletCount);
         void UpdateFireMode(string fireMode);
     }
 
@@ -21,9 +21,9 @@ namespace UI
         /// 총알 개수를 표시할 UI
         /// </summary>
         /// <param name="bulletCount"></param>
-        public void UpdateBulletCount(int bulletCount)
+        public void UpdateBulletCount(int bulletCount, int carryBulletCount)
         {
-            bulletCountText.text = bulletCount.ToString();
+            bulletCountText.text = bulletCount.ToString() + " / " + carryBulletCount.ToString();
         }
 
         /// <summary>

@@ -9,19 +9,18 @@ namespace Controllers
 {
     public class GunController : MonoBehaviour
     {
-        
+
         [SerializeField]
         private Gun currentGun;             // 현재 장착된 총
         [SerializeField]
         private GameObject gun;              // 총 프리팹
         [SerializeField]
         private GameObject bullet;           // 총알 프리팹
-        
-        private float currentFireRate;          // 현재 연사 속도
+
+        private float currentFireRate;       // 현재 연사 속도
 
         private float shootDelay = 0.1f;    // 총알 발사 딜레이
-        private int bulletCount = 30;            // 총알 개수
-
+        private bool isReload = false;      // 재장전 중인지 확인하는 변수
 
         /// <summary>
         /// 총알 개수를 표시할 UI
@@ -37,18 +36,20 @@ namespace Controllers
         void Update()
         {
             GunFireRateCalculate();
-            
+
             // 총 상태 변경
-            if(Input.GetKeyDown(KeyCode.T))
+            if (Input.GetKeyDown(KeyCode.T))
             {
                 TrySetFireMode();
             }
 
-            if(Input.GetKeyDown(KeyCode.R)){
-                // Reload();
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                TryReload();
             }
 
-            if (Input.GetMouseButton(0)){
+            if (Input.GetMouseButton(0))
+            {
                 TryShoot();
             }
         }
@@ -56,9 +57,11 @@ namespace Controllers
         /// <summary>
         /// 총기 모드 변경 시도
         /// </summary>
-        private void TrySetFireMode(){
+        private void TrySetFireMode()
+        {
             // 나중에 애니메이션 등 연출에 따라 사용
-            if(gun != null){
+            if (gun != null)
+            {
                 SetFiringMode();
             }
         }
@@ -90,39 +93,90 @@ namespace Controllers
         /// <summary>
         /// 총알 발사 시도 = 발사 가능 상태인지 확인, 발사 진행 과정
         /// </summary>
-        private void TryShoot(){
-            // // 연사 속도가 0이면 총알 발사
-            if(currentFireRate <= 0 && currentGun.firingMode != Gun.GunModeState.Empty && bulletCount > 0){
-                Shoot();
-                uiUpdateable.UpdateBulletCount(--bulletCount);                // 총알 개수 UI 갱신
+        private void TryShoot()
+        {   
+            // 재장전 중이면 발사하지 않음
+            if(!isReload){
+                // // 연사 속도가 0이면 총알 발사
+                if (currentFireRate <= 0 && currentGun.firingMode != Gun.GunModeState.Empty && currentGun.currentBulletCount > 0)
+                {
+                    Shoot();
+                    uiUpdateable.UpdateBulletCount(--currentGun.currentBulletCount, currentGun.carryBulletCount);                // 총알 개수 UI 갱신
+                }else{
+                    // 재장전을 계속 진행
+                }
             }
+
         }
 
         /// <summary>
         /// 총알 발사 처리 과정
         /// </summary>
-        private void Shoot(){
+        private void Shoot()
+        {
             currentFireRate = currentGun.fireRate + shootDelay;
 
             // 총알 생성 및 발사
             Instantiate(bullet, gun.transform.position, gun.transform.rotation);
         }
 
-        // private void Reload(){
-        //     // R 키를 누르면 재장전
-        //     bulletCount = 30;
-        //     uiUpdateable.UpdateBulletCount(bulletCount);                // 총알 개수 UI 갱신
-        //     gunState = previousState;                                   // 이전 상태로 변경
-        // }
-
-
         /// <summary>
         /// 연사 속도 계산
         /// </summary>
-        private void GunFireRateCalculate(){
-            if(currentFireRate > 0){
+        private void GunFireRateCalculate()
+        {
+            if (currentFireRate > 0)
+            {
                 currentFireRate -= Time.deltaTime;
             }
+        }
+
+        /// <summary>
+        /// 재장전 시도 - 재장전 중이 아니고, 탄알집에 남아이 있는 총알이 가득 차 있지 않으면 재장전
+        /// </summary>
+        private void TryReload()
+        {
+            if (!isReload && currentGun.currentBulletCount < currentGun.reloadBulletCount)
+            {
+                ReloadCoroutine();
+            }
+        }
+
+        /// <summary>
+        /// 재장전 처리 과정
+        /// todo: 재장전 애니메이션 추가, 재장전 소리 추가
+        /// </summary>
+        private void ReloadCoroutine()
+        {
+            // 현재 남아있는 총알의 개수가 0보다 크다면 재장전
+            if (currentGun.carryBulletCount > 0)
+            {
+                isReload = true;
+
+                // 기존 총알을 소유하고 있는 총알 개수에 더하고 재장전
+                currentGun.carryBulletCount += currentGun.currentBulletCount;   
+                currentGun.currentBulletCount = 0;                              
+
+                if (currentGun.carryBulletCount >= currentGun.reloadBulletCount)
+                {
+                    currentGun.currentBulletCount = currentGun.reloadBulletCount;  
+                    currentGun.carryBulletCount -= currentGun.reloadBulletCount;   
+                }
+                else
+                {
+                    // 현재 소유하고 있는 총알 개수가 재장전 가능한 최대 개수보다 작다면
+                    // 현재 소유하고 있는 총알 개수만큼만 재장전
+                    currentGun.currentBulletCount = currentGun.carryBulletCount;   
+                    currentGun.carryBulletCount = 0;                               
+                }
+
+                isReload = false;
+            }else{
+                // 총알이 없으면 재장전을 하지 않음
+                Debug.Log("총알이 없습니다.");
+            }
+
+            uiUpdateable.UpdateBulletCount(currentGun.currentBulletCount, currentGun.carryBulletCount);      // 총알 개수 UI 갱신
         }
     }
 

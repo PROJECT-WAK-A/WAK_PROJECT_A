@@ -10,18 +10,12 @@ namespace Controllers
     public class GunController : MonoBehaviour
     {
 
-        [SerializeField]
-        private Gun currentGun;             // 현재 장착된 총
-        [SerializeField]
-        private GameObject gun;              // 총 프리팹
-        [SerializeField]
-        private GameObject bullet;           // 총알 프리팹
-
-        [SerializeField]
-        private Transform bulletTrans;    // 총알 위치
+        [SerializeField] private Gun currentGun;                 // 현재 장착된 총
+        [SerializeField] private GameObject objGun;             // 총 프리팹
+        [SerializeField] private GameObject objBullet;          // 총알 프리팹
+        [SerializeField] private Transform bulletTrans;       // 총알 발사 위치
 
         private float currentFireRate;       // 현재 연사 속도
-
         private float shootDelay = 0.1f;    // 총알 발사 딜레이
         private bool isReload = false;      // 재장전 중인지 확인하는 변수
 
@@ -63,7 +57,7 @@ namespace Controllers
         private void TrySetFireMode()
         {
             // 나중에 애니메이션 등 연출에 따라 사용
-            if (gun != null)
+            if (objGun != null)
             {
                 SetFiringMode();
             }
@@ -120,7 +114,8 @@ namespace Controllers
             currentFireRate = currentGun.fireRate + shootDelay;
 
             // 총알 생성 및 발사
-            Instantiate(bullet, bulletTrans.transform.position, bulletTrans.transform.rotation);
+            objBullet.GetComponent<Bullet>().maxDistance = currentGun.range;                          // 총알의 최대 사정거리 설정
+            Instantiate(objBullet, bulletTrans.transform.position, bulletTrans.transform.rotation);
 
             currentGun.fireFlash.Play();    // 총 발사 시 총구 화염 효과 재생
         }

@@ -37,6 +37,7 @@ namespace Items
         };
 
         public GunModeState firingMode;             // 현재 총기 모드 상태
+        public ParticleSystem fireFlash;           // 총알 발사 시 파티클
 
     }
 

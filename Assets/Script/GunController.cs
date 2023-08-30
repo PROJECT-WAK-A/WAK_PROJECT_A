@@ -121,6 +121,8 @@ namespace Controllers
 
             // 총알 생성 및 발사
             Instantiate(bullet, bulletTrans.transform.position, bulletTrans.transform.rotation);
+
+            currentGun.fireFlash.Play();    // 총 발사 시 총구 화염 효과 재생
         }
 
         /// <summary>

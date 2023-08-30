@@ -12,7 +12,7 @@ namespace Controllers
 
         [SerializeField] private Gun currentGun;                 // 현재 장착된 총
         [SerializeField] private GameObject objGun;             // 총 프리팹
-        [SerializeField] private GameObject objBullet;          // 총알 프리팹
+        [SerializeField] private GameObject bulletPrefab;       // 총알 프리팹
         [SerializeField] private Transform bulletTrans;       // 총알 발사 위치
 
         private float currentFireRate;       // 현재 연사 속도
@@ -114,8 +114,9 @@ namespace Controllers
             currentFireRate = currentGun.fireRate + shootDelay;
 
             // 총알 생성 및 발사
-            objBullet.GetComponent<Bullet>().maxDistance = currentGun.range;                          // 총알의 최대 사정거리 설정
-            Instantiate(objBullet, bulletTrans.transform.position, bulletTrans.transform.rotation);
+            GameObject objBullet = Instantiate(bulletPrefab,bulletTrans.transform.position, bulletTrans.transform.rotation);
+            Bullet bullet = objBullet.GetComponent<Bullet>();    // 총알 스크립트 가져오기
+            bullet.SetBulletSetting(currentGun.bulletSpeed, currentGun.range);                      // 총알 설정
 
             currentGun.fireFlash.Play();    // 총 발사 시 총구 화염 효과 재생
         }

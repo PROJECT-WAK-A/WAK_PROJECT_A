@@ -6,8 +6,8 @@ namespace Items
 {
     public class Bullet : MonoBehaviour
     {
-        private float speed = 30.0f;        // 총알 속도
-        public float maxDistance;           // 총알 최대 사정거리
+        private float speed;        // 총알 속도
+        private float maxDistance;           // 총알 최대 사정거리
 
         private Vector3 initPosition;       // 총알 초기 위치
 
@@ -19,10 +19,9 @@ namespace Items
         void Update()
         {
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
-            Debug.Log(maxDistance);
             CheckDistance();
         }
-
+             
         // 총알이 최대 사정거리를 넘어가면 사라지도록 설정
         private void CheckDistance()
         {
@@ -31,6 +30,18 @@ namespace Items
             {
                 DestroyBullet();
             }
+        }
+
+
+        /// <summary>
+        /// 총알의 속도와 최대 사정거리를 설정
+        /// </summary>
+        /// <param name="speed"> 총알 속도</param>
+        /// <param name="maxDistance">총알 사정거리</param>
+        public void SetBulletSetting(float speed, float maxDistance)
+        {
+            this.speed = speed;
+            this.maxDistance = maxDistance;
         }
 
         // todo: 총알이 사라지는 동시에 파티클이 나오도록 수정

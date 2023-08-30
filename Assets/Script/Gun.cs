@@ -17,6 +17,7 @@ namespace Items
         public float fireRate;      // 연사속도
         public float reloadTime;    // 재장전 속도
         public float damage = 0;    // 총의 데미지
+        public float bulletSpeed;   // 총알 속도
 
 
         public int reloadBulletCount;   // 총알 재장전 개수

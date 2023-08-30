@@ -17,6 +17,9 @@ namespace Controllers
         [SerializeField]
         private GameObject bullet;           // 총알 프리팹
 
+        [SerializeField]
+        private Transform bulletTrans;    // 총알 위치
+
         private float currentFireRate;       // 현재 연사 속도
 
         private float shootDelay = 0.1f;    // 총알 발사 딜레이
@@ -117,7 +120,7 @@ namespace Controllers
             currentFireRate = currentGun.fireRate + shootDelay;
 
             // 총알 생성 및 발사
-            Instantiate(bullet, gun.transform.position, gun.transform.rotation);
+            Instantiate(bullet, bulletTrans.transform.position, bulletTrans.transform.rotation);
         }
 
         /// <summary>

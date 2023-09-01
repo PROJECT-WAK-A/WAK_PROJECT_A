@@ -18,6 +18,8 @@ namespace Controllers
         private float currentFireRate;       // 현재 연사 속도
         private float shootDelay = 0.1f;    // 총알 발사 딜레이
         private bool isReload = false;      // 재장전 중인지 확인하는 변수
+        private bool isFineSight = false;   // 정조준 중인지 확인하는 변수
+        private Vector3 originPos;          // 정조준 해제 시 위치 복구를 위한 변수
 
         /// <summary>
         /// 총알 개수를 표시할 UI
@@ -27,6 +29,7 @@ namespace Controllers
         private void Start()
         {
             uiUpdateable = FindObjectOfType<UIMgr>();
+            originPos = objGun.transform.localPosition;
         }
 
         // Update is called once per frame
@@ -48,6 +51,11 @@ namespace Controllers
             if (Input.GetMouseButton(0))
             {
                 TryShoot();
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                TryFineSight();
             }
         }
 
@@ -91,15 +99,18 @@ namespace Controllers
         /// 총알 발사 시도 = 발사 가능 상태인지 확인, 발사 진행 과정
         /// </summary>
         private void TryShoot()
-        {   
+        {
             // 재장전 중이면 발사하지 않음
-            if(!isReload){
+            if (!isReload)
+            {
                 // // 연사 속도가 0이면 총알 발사
                 if (currentFireRate <= 0 && currentGun.firingMode != Gun.GunModeState.Empty && currentGun.currentBulletCount > 0)
                 {
                     Shoot();
                     uiUpdateable.UpdateBulletCount(--currentGun.currentBulletCount, currentGun.carryBulletCount);                // 총알 개수 UI 갱신
-                }else{
+                }
+                else
+                {
                     // 재장전을 계속 진행
                 }
             }
@@ -114,7 +125,7 @@ namespace Controllers
             currentFireRate = currentGun.fireRate + shootDelay;
 
             // 총알 생성 및 발사
-            GameObject objBullet = Instantiate(bulletPrefab,bulletTrans.transform.position, bulletTrans.transform.rotation);
+            GameObject objBullet = Instantiate(bulletPrefab, bulletTrans.transform.position, bulletTrans.transform.rotation);
             Bullet bullet = objBullet.GetComponent<Bullet>();    // 총알 스크립트 가져오기
             bullet.SetBulletSetting(currentGun.bulletSpeed, currentGun.range);                      // 총알 설정
 
@@ -155,29 +166,85 @@ namespace Controllers
                 isReload = true;
 
                 // 기존 총알을 소유하고 있는 총알 개수에 더하고 재장전
-                currentGun.carryBulletCount += currentGun.currentBulletCount;   
-                currentGun.currentBulletCount = 0;                              
+                currentGun.carryBulletCount += currentGun.currentBulletCount;
+                currentGun.currentBulletCount = 0;
 
                 if (currentGun.carryBulletCount >= currentGun.reloadBulletCount)
                 {
-                    currentGun.currentBulletCount = currentGun.reloadBulletCount;  
-                    currentGun.carryBulletCount -= currentGun.reloadBulletCount;   
+                    currentGun.currentBulletCount = currentGun.reloadBulletCount;
+                    currentGun.carryBulletCount -= currentGun.reloadBulletCount;
                 }
                 else
                 {
                     // 현재 소유하고 있는 총알 개수가 재장전 가능한 최대 개수보다 작다면
                     // 현재 소유하고 있는 총알 개수만큼만 재장전
-                    currentGun.currentBulletCount = currentGun.carryBulletCount;   
-                    currentGun.carryBulletCount = 0;                               
+                    currentGun.currentBulletCount = currentGun.carryBulletCount;
+                    currentGun.carryBulletCount = 0;
                 }
 
                 isReload = false;
-            }else{
+            }
+            else
+            {
                 // 총알이 없으면 재장전을 하지 않음
                 Debug.Log("총알이 없습니다.");
             }
 
             uiUpdateable.UpdateBulletCount(currentGun.currentBulletCount, currentGun.carryBulletCount);      // 총알 개수 UI 갱신
+        }
+
+        /// <summary>
+        /// 정조준 시도 - 정조준 상태가 아니면 정조준
+        /// </summary>
+        private void TryFineSight()
+        {
+            FineSight();
+        }
+
+        /// <summary>
+        /// 정조준 상태 변경 처리 과정
+        /// </summary>
+        private void FineSight()
+        {
+            isFineSight = !isFineSight;
+
+            if (isFineSight)
+            {
+                StopAllCoroutines();                            // 코루틴 모두 정지
+                StartCoroutine(FineSightEnabledCoroutine());   // 정조준 코루틴 실행
+            }
+            else
+            {
+                StopAllCoroutines();                            
+                StartCoroutine(FineSightDisabledCoroutine()); // 정조준 해제 코루틴 실행
+            }
+        }
+
+        /// <summary>
+        /// 정조준 코루틴
+        /// </summary>
+        IEnumerator FineSightEnabledCoroutine()
+        {
+            // 정조준 시 총의 위치를 정조준 위치로 이동
+            while (currentGun.transform.localPosition != currentGun.fineSightOriginPos)
+            {
+                // 정조준 위치로 이동
+                currentGun.transform.localPosition = Vector3.Lerp(currentGun.transform.localPosition, currentGun.fineSightOriginPos, 0.2f);
+                yield return null;
+            }
+        }
+
+        /// <summary>
+        /// 정조준 해제 코루틴
+        /// </summary>
+        IEnumerator FineSightDisabledCoroutine()
+        {
+            while (currentGun.transform.localPosition != originPos)
+            {
+                currentGun.transform.localPosition = Vector3.Lerp(currentGun.transform.localPosition, originPos, 0.2f);
+                yield return null;
+            }
+
         }
     }
 

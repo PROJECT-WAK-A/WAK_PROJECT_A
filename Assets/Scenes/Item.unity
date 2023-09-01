@@ -5016,8 +5016,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 95322737}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.16819, y: -0.0026516, z: 0.324}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.16819002, y: -0.0026515722, z: 0.324}
   m_LocalScale: {x: 0.91161, y: 0.91161, z: 0.91161}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5185,7 +5185,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 256393853}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.251, y: -0.029999971, z: 0.84}
+  m_LocalPosition: {x: 0.203, y: -0.056, z: 0.84}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5211,13 +5211,14 @@ MonoBehaviour:
   fireRate: 0.2
   reloadTime: 3
   damage: 10
+  bulletSpeed: 30
   reloadBulletCount: 50
   currentBulletCount: 50
   maxBulletCount: 600
   carryBulletCount: 600
   retroActionForce: 0
   retroActionFineSightForce: 0
-  fineSightOriginPos: {x: 0, y: 0, z: 0}
+  fineSightOriginPos: {x: -0.233, y: 0.265, z: 0.84}
   firingMode: 0
   fireFlash: {fileID: 832492740}
 --- !u!1 &297106036
@@ -5266,7 +5267,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentGun: {fileID: 256393858}
   objGun: {fileID: 256393853}
-  objBullet: {fileID: 1124179929510599493, guid: 44cb93151f1027c40b92892ab891414e,
+  bulletPrefab: {fileID: 1124179929510599493, guid: 44cb93151f1027c40b92892ab891414e,
     type: 3}
   bulletTrans: {fileID: 1457600311}
 --- !u!1 &471659629

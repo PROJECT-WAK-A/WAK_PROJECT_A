@@ -10,16 +10,20 @@ namespace Controllers
     public class GunController : MonoBehaviour
     {
 
-        [SerializeField] private Gun currentGun;                 // 현재 장착된 총
-        [SerializeField] private GameObject objGun;             // 총 프리팹
-        [SerializeField] private GameObject bulletPrefab;       // 총알 프리팹
-        [SerializeField] private Transform bulletTrans;       // 총알 발사 위치
+        [SerializeField] private Gun currentGun;                    // 현재 장착된 총
+        [SerializeField] private GameObject objGun;                 // 총 프리팹
+        [SerializeField] private GameObject bulletPrefab;           // 총알 프리팹
+        [SerializeField] private Transform bulletTrans;             // 총알 발사 위치
+        [SerializeField] private PlayerController playerController; // 플레이어 컨트롤러
 
         private float currentFireRate;       // 현재 연사 속도
         private float shootDelay = 0.1f;    // 총알 발사 딜레이
         private bool isReload = false;      // 재장전 중인지 확인하는 변수
         private bool isFineSight = false;   // 정조준 중인지 확인하는 변수
         private Vector3 originPos;          // 정조준 해제 시 위치 복구를 위한 변수
+
+        private Vector3 screenCenter;       // 화면 중앙
+        private Vector3 crosshairPosition;  // 크로스헤어의 위치
 
         /// <summary>
         /// 총알 개수를 표시할 UI
@@ -30,6 +34,10 @@ namespace Controllers
         {
             uiUpdateable = FindObjectOfType<UIMgr>();
             originPos = objGun.transform.localPosition;
+
+            // 화면 중앙을 기준으로 크로스헤어의 위치 계산
+            screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+            crosshairPosition = Camera.main.ScreenToWorldPoint(screenCenter);
         }
 
         // Update is called once per frame
@@ -127,9 +135,17 @@ namespace Controllers
             // 총알 생성 및 발사
             GameObject objBullet = Instantiate(bulletPrefab, bulletTrans.transform.position, bulletTrans.transform.rotation);
             Bullet bullet = objBullet.GetComponent<Bullet>();    // 총알 스크립트 가져오기
-            bullet.SetBulletSetting(currentGun.bulletSpeed, currentGun.range);                      // 총알 설정
+            bullet.SetBulletSetting(currentGun.bulletSpeed, currentGun.range, CalculateBulletDirection()); // 총알 설정
 
             currentGun.fireFlash.Play();    // 총 발사 시 총구 화염 효과 재생
+        }
+
+        private Vector3 CalculateBulletDirection()
+        {
+            // 총알의 이동 방향 계산
+            Vector3 bulletDirection = (crosshairPosition - bulletTrans.transform.position).normalized;
+
+            return bulletDirection;
         }
 
         /// <summary>

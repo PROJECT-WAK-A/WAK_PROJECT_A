@@ -277,7 +277,6 @@ namespace Controllers
             {
                 // 총기 위치 초기화
                 currentGun.transform.localPosition = originPos;
-                Debug.Log(originPos);
 
                 // 반동 액션 실행
                 while (currentGun.transform.localPosition.z >= recoilBack.z + 0.02f)
@@ -295,10 +294,8 @@ namespace Controllers
             }
             else
             {  // 정조준 시 
-                Debug.Log("정조준 반동");
                 // 총기 위치 초기화
                 currentGun.transform.localPosition = currentGun.fineSightOriginPos;
-                Debug.Log(currentGun.transform.localPosition.z + " " + currentGun.fineSightOriginPos.z + 0.02f);
 
                 // 반동 액션 실행
                 while (currentGun.transform.localPosition.z >= recoilFineSightBack.z + 0.02f)

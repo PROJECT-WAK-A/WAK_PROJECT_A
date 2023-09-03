@@ -234,7 +234,7 @@ namespace Controllers
             }
             else
             {
-                StopAllCoroutines();                            
+                StopAllCoroutines();
                 StartCoroutine(FineSightDisabledCoroutine()); // 정조준 해제 코루틴 실행
             }
         }
@@ -266,23 +266,51 @@ namespace Controllers
 
         }
 
-        IEnumerator RecoilCoroutine(){
+        IEnumerator RecoilCoroutine()
+        {
             // 반동 세기 만큼 반동 후퇴
-            Vector3 recoilBack = new Vector3(originPos.x, originPos.y, -currentGun.recoilForce); 
+            Vector3 recoilBack = new Vector3(originPos.x, originPos.y, -currentGun.recoilForce);
+            Vector3 recoilFineSightBack = new Vector3(currentGun.fineSightOriginPos.x, currentGun.fineSightOriginPos.y, -currentGun.recoilFineSightForce);
 
             // 정조준 상태가 아닐 때 반동
-            if(!isFineSight){
+            if (!isFineSight)
+            {
+                // 총기 위치 초기화
                 currentGun.transform.localPosition = originPos;
+                Debug.Log(originPos);
 
                 // 반동 액션 실행
-                while(currentGun.transform.localPosition.z >= recoilBack.z + 0.02f){ 
+                while (currentGun.transform.localPosition.z >= recoilBack.z + 0.02f)
+                {
                     currentGun.transform.localPosition = Vector3.Lerp(currentGun.transform.localPosition, recoilBack, 0.4f);
                     yield return null;
                 }
 
                 // 원위치 이동
-                while(currentGun.transform.localPosition != originPos){
+                while (currentGun.transform.localPosition != originPos)
+                {
                     currentGun.transform.localPosition = Vector3.Lerp(currentGun.transform.localPosition, originPos, 0.1f);
+                    yield return null;
+                }
+            }
+            else
+            {  // 정조준 시 
+                Debug.Log("정조준 반동");
+                // 총기 위치 초기화
+                currentGun.transform.localPosition = currentGun.fineSightOriginPos;
+                Debug.Log(currentGun.transform.localPosition.z + " " + currentGun.fineSightOriginPos.z + 0.02f);
+
+                // 반동 액션 실행
+                while (currentGun.transform.localPosition.z >= recoilFineSightBack.z + 0.02f)
+                {
+                    currentGun.transform.localPosition = Vector3.Lerp(currentGun.transform.localPosition, recoilFineSightBack, 0.4f);
+                    yield return null;
+                }
+
+                // 원위치
+                while (currentGun.transform.localPosition != currentGun.fineSightOriginPos)
+                {
+                    currentGun.transform.localPosition = Vector3.Lerp(currentGun.transform.localPosition, currentGun.fineSightOriginPos, 0.1f);
                     yield return null;
                 }
             }

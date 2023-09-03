@@ -5257,8 +5257,8 @@ MonoBehaviour:
   currentBulletCount: 50
   maxBulletCount: 600
   carryBulletCount: 600
-  retroActionForce: 0
-  retroActionFineSightForce: 0
+  recoilForce: 0.1
+  recoilFineSightForce: 0.2
   fineSightOriginPos: {x: 0, y: 0, z: 0}
   firingMode: 0
   fireFlash: {fileID: 832492740}

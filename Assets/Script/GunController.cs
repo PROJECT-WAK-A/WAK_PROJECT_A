@@ -138,6 +138,9 @@ namespace Controllers
             bullet.SetBulletSetting(currentGun.bulletSpeed, currentGun.range, CalculateBulletDirection()); // 총알 설정
 
             currentGun.fireFlash.Play();    // 총 발사 시 총구 화염 효과 재생
+
+            StopAllCoroutines();                // 코루틴 모두 정지
+            StartCoroutine(RecoilCoroutine());  // 반동 코루틴 실행
         }
 
         private Vector3 CalculateBulletDirection()
@@ -261,6 +264,28 @@ namespace Controllers
                 yield return null;
             }
 
+        }
+
+        IEnumerator RecoilCoroutine(){
+            // 반동 세기 만큼 반동 후퇴
+            Vector3 recoilBack = new Vector3(originPos.x, originPos.y, -currentGun.recoilForce); 
+
+            // 정조준 상태가 아닐 때 반동
+            if(!isFineSight){
+                currentGun.transform.localPosition = originPos;
+
+                // 반동 액션 실행
+                while(currentGun.transform.localPosition.z >= recoilBack.z + 0.02f){ 
+                    currentGun.transform.localPosition = Vector3.Lerp(currentGun.transform.localPosition, recoilBack, 0.4f);
+                    yield return null;
+                }
+
+                // 원위치 이동
+                while(currentGun.transform.localPosition != originPos){
+                    currentGun.transform.localPosition = Vector3.Lerp(currentGun.transform.localPosition, originPos, 0.1f);
+                    yield return null;
+                }
+            }
         }
     }
 

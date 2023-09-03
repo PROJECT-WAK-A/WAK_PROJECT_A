@@ -25,8 +25,8 @@ namespace Items
         public int maxBulletCount;      // 최대 소유 가능 총알 개수
         public int carryBulletCount;    // 현재 소유하고 있는 총알 개수
 
-        public float retroActionForce;              // 반동 세기
-        public float retroActionFineSightForce;     // 정조준시 반동 세기
+        public float recoilForce;              // 반동 세기
+        public float recoilFineSightForce;     // 정조준시 반동 세기
         public Vector3 fineSightOriginPos;          // 정조준시 위치
 
         // 총기 모드 상태
